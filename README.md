@@ -14,4 +14,4 @@ to generate the table
 	+DELETE delete the patient with the corresponding id
 
 Open front-end folder with cmd and use    npm-start
-The app is now running on http:/localhost:3000 
+The app is now running on http://localhost:3000 
