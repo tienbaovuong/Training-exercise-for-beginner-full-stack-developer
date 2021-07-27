@@ -79,7 +79,15 @@ function PatientForm({setName, name,setAge,age,setEmail,email,setGender,gender,s
     }
     const onSubmit = (event) => {
       event.preventDefault();
-      history.push("/create/confirm");
+      var emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+      var phoneRegex = /^(\+91-|\+91|0)?\d{10}$/; 
+      if(!phoneRegex.test(phone_number)){
+        alert("Invalid phone number");
+      }
+      else if(!emailRegex.test(email)){
+        alert("Invalid email")
+      }
+      else history.push("/create/confirm");
   }
     return (
     <div className="center-form">
@@ -98,7 +106,7 @@ function PatientForm({setName, name,setAge,age,setEmail,email,setGender,gender,s
             
         </select></pre>
         <pre className="agebox">Age    <input required
-          type="number"
+          type="number" min="1"
           name="age"
           value={age}
           onChange={onChange}

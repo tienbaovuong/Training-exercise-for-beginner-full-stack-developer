@@ -82,8 +82,8 @@ class Home extends React.Component{
             
         </select>
         <input 
-          type="number"
-          name="age"
+          type="number" min="1"
+          name="age" 
           placeholder="Age"
           value={age}
           onChange={this.onChange}

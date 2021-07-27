@@ -80,8 +80,17 @@ function PatientEditForm({id,setName, name,setAge,age,setEmail,email,setGender,g
     }
     const onSubmit = (event) => {
       event.preventDefault();
-      history.push(`/edit/id/${id}/confirm`);
+      var emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+      var phoneRegex = /^(\+91-|\+91|0)?\d{10}$/; 
+      if(!phoneRegex.test(phone_number)){
+        alert("Invalid phone number");
+      }
+      else if(!emailRegex.test(email)){
+        alert("Invalid email")
+      }
+      else history.push(`/edit/id/${id}/confirm`);
   }
+
     return (
     <div className="center-form">
       <form onSubmit= {onSubmit}>
@@ -100,18 +109,18 @@ function PatientEditForm({id,setName, name,setAge,age,setEmail,email,setGender,g
             
         </select></pre>
         <pre className="agebox">Age    <input required
-          type="number"
+          type="number" min="1"
           name="age"
           value={age}
           onChange={onChange}
         /></pre>
-        <pre className="emailbox">Email   <input 
+        <pre id="email" className="emailbox">Email   <input 
           type="text"
           name="email"
           value={email}
           onChange={onChange}
         /></pre>
-        <pre className="phonebox">Phone number   <input required
+        <pre id="phone" className="phonebox">Phone number   <input required
           type="text"
           name="phone_number"
           value={phone_number}
