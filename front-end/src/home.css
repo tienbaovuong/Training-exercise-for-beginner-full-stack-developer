@@ -1,0 +1,70 @@
+table{
+    width:100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th{
+    border: 1px solid black;
+    padding : 15px;
+    height: 50px;
+    background-color: rgb(87, 86, 86);
+  }
+  td{
+    border: 1px solid black;
+    padding : 15px;
+    text-align: center;
+    height: 70px;
+  }
+  tr:nth-child(odd){
+    background-color:rgb(212, 212, 212);
+  }
+  tr:nth-child(even){
+    background-color:white;
+  }
+  .btn-group{
+    float: right;
+    padding-top: 15px;
+  }
+  button{
+    height:50px;
+    width: 50px;
+  }
+
+  button.filter-button{
+      width: 120px;
+      margin-top: -15px;
+      margin-bottom:15px;
+  }
+  form.filter-form input{
+      margin-right: 20px;
+      height: 30px;
+      vertical-align:middle;
+  }
+  form.filter-form select{
+    margin-right: 20px;
+    vertical-align: middle;
+    height: 36px;
+  }
+  button.create-button{
+    float: left;
+    margin-top: 15px;
+    width: 150px;
+  }
+  th.ID{
+    width: 180px;
+  }
+  th.Name{
+    width: 180px;
+  }
+  th.Gender{
+    width: 220px;
+  }
+  th.Age{
+    width: 180px;
+  }
+  th.Email{
+    width: 180px;
+  }
+  th.Phone{
+    width: 180px;
+  }

@@ -1,0 +1,27 @@
+
+h1{
+  border: 1px solid black;
+  padding: 15px;
+  background-color: white;
+}
+
+body {
+    font: 14px "Century Gothic", Futura, sans-serif;
+    margin: 10px;
+    background-image: url("caro.jpg");
+    background-size: 50%;
+    
+  }
+  a{
+    text-decoration: none;
+    color:rgb(20, 20, 20);
+  }
+
+  ol, ul {
+    padding-left: 30px;
+  }
+  input{
+    height: 30px;
+    box-shadow:0 0 0px 1000px white inset;
+  }
+  
