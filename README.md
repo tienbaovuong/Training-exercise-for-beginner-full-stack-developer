@@ -13,5 +13,5 @@ to generate the table
  - requestURL: http://localhost:8080/api/patient/{id}
 	+DELETE delete the patient with the corresponding id
 
-Open front-end folder with cmd and use    npm-start
+Open front-end folder with cmd and use    npm-start or download the image from dockerhub instead https://hub.docker.com/repository/docker/umino0124/bao#
 The app is now running on http://localhost:3000 
