@@ -12,7 +12,7 @@ import {
   useRouteMatch,
   useParams
 } from "react-router-dom";
-import store from './app/store'
+import store from './store/store.js'
 import { Provider } from 'react-redux'
 export default function App() {
   

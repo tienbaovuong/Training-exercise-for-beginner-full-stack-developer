@@ -26,8 +26,11 @@ public class PatientServiceImplementaion implements PatientService {
 	   
 	}
 	@Override
-	public List<Patient> findPatientByPage(int i){	
-		return (List<Patient>)repository.findByOrderByIdAsc().subList(4*i-4, 4*i);
+	public List<Patient> findPatientByPage(int page){	
+		int size=0;
+		if(page==Math.ceil(findNumberOfPatient()/4.0)) size=(int) (findNumberOfPatient()%4);
+		if(size==0) size=4;
+		return (List<Patient>)repository.findByOrderByIdAsc().subList(4*page-4, 4*page-4+size);
 	}
 	@Override
 	public Optional<Patient> findPatientById(long i){
@@ -68,7 +71,11 @@ public class PatientServiceImplementaion implements PatientService {
 	}
 	@Override
 	public List<Patient> filterByPage(Patient p,long page){
-		return filter(p).subList(4*((int)page-1),4*(int)page);
+		List<Patient> list=filter(p);
+		int size=0;
+		if(page==Math.ceil(list.size()/4.0)) size=list.size()%4;
+		if(size==0) size=4;
+		return filter(p).subList(4*((int)page-1),4*(int)page-4+size);
 	}
 	@Override
 	public Long filterCounter(Patient p) {

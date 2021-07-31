@@ -8,31 +8,37 @@ import {
     Switch,
     Route,
     Link,
-    useParams
+    useParams,
+    useHistory
 } from "react-router-dom";
 import { DeleteDialog } from './delete.js';
+import { changeFilterData,resetFilterData } from './store/filterDataSlice.js';
+import { changeCounterFilter } from './store/counterFilterSlice.js';
+import { changeCounter } from './store/counterSlice.js';
+import { changeMainData} from './store/mainDataSlice.js';
 class Home extends React.Component{
     constructor(props){
         super(props)
-        this.state={
+        this.state={filter:{
             id: null, 
             name: null,
             gender:null,
-            age:null, 
+            age:0, 
             email:null, 
-            phone_number:null,
-        }
+            phone_number:null
+            },
+            filterMode:0}
     }
     
-    
     onChange = (event) => {
-        this.setState({
-            [event.targer.name] : event.target.value
-        });
+        this.setState(
+            this.state.filter.id = event.target.value
+        )
     }
     onSubmit = (event) => {
         event.preventDefault();
-        OnSubmit(this.state);
+        this.setState({filterMode:1})
+        OnSubmit(this.state.filter);
     }
     renderFilter(){
     const {  id, name, gender, age,email,phone_number } =this.state
@@ -99,10 +105,10 @@ class Home extends React.Component{
                 
                 <Switch>
                     <Route path="/:page">
-                        <TableWithPage  />
+                        <TableWithPage filterMode={this.state.filterMode} />
                     </Route>
                     <Route  path="/">
-                        <Table  page={1} />
+                        <Table  page={1} filterMode={this.state.filterMode}/>
                     </Route>
                     
                 </Switch>
@@ -116,110 +122,57 @@ export default Home;
 
 function OnSubmit(state){
     const dispatch = useDispatch();
-    dispatch(changeFilter())
+    dispatch(changeFilter(state));
+    dispatch(resetFilterData);
+    dispatch(changeCounterFilter(0))
+    const history = useHistory();
+    history.push("/");
 }
-function TableWithPage() {
+function TableWithPage(props) {
     const {page}=useParams();
-    return <Table page={page}/>    
+    return <Table page={page} filterMode={props.filterMode}/>    
 }
 function Table (props){
-    const filter = useSelector((state) => state.filter)
+    const patientsFilter = useSelector((state)=>state.filterData[props.page-1]);
+    const patientsMain = useSelector((state)=>state.mainData[props.page-1]);
+    const filter= useSelector((state)=> state.filter);
+    const counterFilter=useSelector((state)=> state.counterFilter.value);
+    const counterMain=useSelector((state)=> state.counterMain.value);
+    const dispatch=useDispatch();
     let patients=[];
     let counter=0;
-    axios.post(`http://localhost:8080/api/patient/filter/${props.page}`,filter)
+    if(props.filterMode===1){
+        patients = patientsFilter;
+        counter = counterFilter;
+        if(counter==0){
+            axios.post(`http://localhost:8080/api/patient/filter/count`,filter)
             .then((response) => {
-                 this.setState({patients:response.data.patients,counter:response.data.counter})
+                    dispatch(changeCounterFilter(response.data));
                 });
-    console.log(patients);
-    const renderTableData = () => {
-        return patients.map((patient, index) => {
-            return (
-               <tr key={index}>
-                  <td>{patient.id}</td>
-                  <td>{patient.name}</td>
-                  <td>{patient.gender}</td>
-                  <td>{patient.age}</td>
-                  <td>{patient.email}</td>
-                  <td>{patient.phone_number}</td>
-                  <td>
-                          <nav>
-                              <pre style={{ display: 'inline-block'}}><Link  to={`/edit/id/${patient.id}`}>Edit</Link>  | </pre><DeleteDialog id={patient.id}/>
-                          </nav>
-                  </td>
-               </tr>
-            )
-         })
-    }
-    const renderTableHeader=()=>{
-        return(
-            <tr>
-                <th className="ID">PatientID</th>
-                <th className="Name">Name</th>
-                <th className="Gender">Gender</th>
-                <th className="Age">Age</th>
-                <th className="Email">Email</th>
-                <th className="Phone">Phone number</th>
-                <th></th>
-            </tr>
-        )
-    }
-    const renderTab=(current,limit,numPage)=>{
-        if(current!==1) {
-            current--;
         }
-        else{
-            limit--;
+        if(patients==null){
+            axios.post(`http://localhost:8080/api/patient/filter/${props.page}`,filter)
+            .then((response) => {
+                    let payload={data:response.data,numPage:props.page};
+                    dispatch(changeFilterData(payload));
+                });
         }
-        if(limit===4)
-        return(
-            <div>
-            <Link to= "/1"><button>{"<<"}</button></Link>
-            <Link to= {`/${current}`}><button>{current}</button></Link>
-            <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
-            <Link to= {`/${current+2}`}><button>{current+2}</button></Link>
-            <Link to= {`/${current+3}`}><button>{current+3}</button></Link>
-            <Link to= {`/${current+4}`}><button>{current+4}</button></Link>
-            <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
-            </div>
-        )
-        if(limit===3)
-        return(
-            <div>
-            <Link to= "/1"><button>{"<<"}</button></Link>
-            <Link to= {`/${current}`}><button>{current}</button></Link>
-            <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
-            <Link to= {`/${current+2}`}><button>{current+2}</button></Link>
-            <Link to= {`/${current+3}`}><button>{current+3}</button></Link>
-            <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
-            </div>
-        )
-        if(limit===2)
-        return(
-            <div>
-            <Link to= "/1"><button>{"<<"}</button></Link>
-            <Link to= {`/${current}`}><button>{current}</button></Link>
-            <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
-            <Link to= {`/${current+2}`}><button>{current+2}</button></Link>
-            <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
-            </div>
-        )
-        if(limit===1)
-        return(
-            <div>
-            <Link to= "/1"><button>{"<<"}</button></Link>
-            <Link to= {`/${current}`}><button>{current}</button></Link>
-            <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
-            <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
-            </div>
-        )
-        if(limit===0)
-        return(
-            <div>
-            <Link to= "/1"><button>{"<<"}</button></Link>
-            <Link to= {`/${current}`}><button>{current}</button></Link>
-            <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
-            </div>
-        )
+    }else{
+        patients = patientsMain;
+        counter = counterMain;
+        if(counter===0){
+            axios.get(`http://localhost:8080/api/patient/count`)
+            .then((response) => {
+                    dispatch(changeCounter(response.data));
+                });
+        }
+        if(patientsMain==null){
+            axios.get(`http://localhost:8080/api/patient/?page=${props.page}`)
+            .then((response) => {
+                    let payload={data:response.data,numPage:props.page};
+                    dispatch(changeMainData(payload));
+                });
+        }
     }
         let lastPage= counter%4;
         if (lastPage===0) lastPage=4;
@@ -252,14 +205,12 @@ function Table (props){
             </div>
         
         )
-        
-
         else return (
             <div>
                 <table>
                     <tbody>
-                        {renderTableHeader}
-                        {renderTableData}
+                        <RenderTableHeader/>
+                        <RenderTableData patients={patients}/>
                     </tbody>
                 </table>
                 <nav>
@@ -268,12 +219,104 @@ function Table (props){
                          Create Patient
                     </button></Link>
                     <div className="btn-group">
-                    {renderTab(current,limit,numPage)}
+                    <RenderTab current={current} limit={limit} numPage={numPage}/>
                     </div>
                 </nav>
             </div>
         )
     }
+function RenderTableHeader(){
+    return(
+        <tr>
+            <th className="ID">PatientID</th>
+            <th className="Name">Name</th>
+            <th className="Gender">Gender</th>
+            <th className="Age">Age</th>
+            <th className="Email">Email</th>
+            <th className="Phone">Phone number</th>
+            <th></th>
+        </tr>
+    )
+}
 
-    
+function RenderTableData({patients}){
+    console.log(patients);
+    if(patients==null) return (<p>Loading...</p>);
+    return patients.map((patient, index)=>{
+            return (
+               <tr key={index}>
+                  <td>{patient.id}</td>
+                  <td>{patient.name}</td>
+                  <td>{patient.gender}</td>
+                  <td>{patient.age}</td>
+                  <td>{patient.email}</td>
+                  <td>{patient.phone_number}</td>
+                  <td>
+                          <nav>
+                              <pre style={{ display: 'inline-block'}}><Link  to={`/edit/id/${patient.id}`}>Edit</Link>  | </pre>
+                              <DeleteDialog id={patient.id}/>
+                          </nav>
+                  </td>
+               </tr>
+            )
+         })
+}
 
+function RenderTab({current,limit,numPage}){
+    if(current!==1) {
+        current--;
+    }
+    else{
+        limit--;
+    }
+    if(limit===4)
+    return(
+        <div>
+        <Link to= "/1"><button>{"<<"}</button></Link>
+        <Link to= {`/${current}`}><button>{current}</button></Link>
+        <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
+        <Link to= {`/${current+2}`}><button>{current+2}</button></Link>
+        <Link to= {`/${current+3}`}><button>{current+3}</button></Link>
+        <Link to= {`/${current+4}`}><button>{current+4}</button></Link>
+        <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
+        </div>
+    )
+    if(limit===3)
+    return(
+        <div>
+        <Link to= "/1"><button>{"<<"}</button></Link>
+        <Link to= {`/${current}`}><button>{current}</button></Link>
+        <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
+        <Link to= {`/${current+2}`}><button>{current+2}</button></Link>
+        <Link to= {`/${current+3}`}><button>{current+3}</button></Link>
+        <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
+        </div>
+    )
+    if(limit===2)
+    return(
+        <div>
+        <Link to= "/1"><button>{"<<"}</button></Link>
+        <Link to= {`/${current}`}><button>{current}</button></Link>
+        <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
+        <Link to= {`/${current+2}`}><button>{current+2}</button></Link>
+        <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
+        </div>
+    )
+    if(limit===1)
+    return(
+        <div>
+        <Link to= "/1"><button>{"<<"}</button></Link>
+        <Link to= {`/${current}`}><button>{current}</button></Link>
+        <Link to= {`/${current+1}`}><button>{current+1}</button></Link>
+        <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
+        </div>
+    )
+    if(limit===0)
+    return(
+        <div>
+        <Link to= "/1"><button>{"<<"}</button></Link>
+        <Link to= {`/${current}`}><button>{current}</button></Link>
+        <Link to= {`/${numPage}`}><button>{">>"}</button></Link>
+        </div>
+    )
+}

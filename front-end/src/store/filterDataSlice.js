@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createReducer, createSlice } from '@reduxjs/toolkit'
 
 export const filterDataSlice = createSlice({
     name: 'counter',
@@ -8,9 +8,12 @@ export const filterDataSlice = createSlice({
         changeFilterData: (state,action) =>{
             state[action.payload.numPage-1]=action.payload.data;
         },
-    }
+        resetFilterData: (state) =>{
+            state=[];
+        }
+    },
 
 })
-export const{changeFilterData}=filterDataSlice.actions
+export const{changeFilterData,resetFilterData}=filterDataSlice.actions
 
 export default filterDataSlice.reducer
