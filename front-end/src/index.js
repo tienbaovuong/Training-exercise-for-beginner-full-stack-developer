@@ -12,7 +12,8 @@ import {
   useRouteMatch,
   useParams
 } from "react-router-dom";
-
+import store from './app/store'
+import { Provider } from 'react-redux'
 export default function App() {
   
   return (
@@ -50,6 +51,8 @@ function Error(){
   return <a href="/" style={{ textDecoration: 'underline' }} to="/">Return to home page</a>
 }
 ReactDOM.render(
-    <App/>,
+    <Provider store={store}>
+      <App/>
+      </Provider>,
  document.getElementById('root')
 );

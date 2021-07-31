@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.crud.data.models.Patient;
@@ -20,9 +21,13 @@ public class PatientServiceImplementaion implements PatientService {
 	private PatientRepository repository;
 
 	@Override
-	public List<Patient> findAllPatient() {
-	   return  (List<Patient>)repository.findByOrderByIdAsc();
+	public Long findNumberOfPatient() {
+	   return  repository.count();
 	   
+	}
+	@Override
+	public List<Patient> findPatientByPage(int i){	
+		return (List<Patient>)repository.findByOrderByIdAsc().subList(4*i-4, 4*i);
 	}
 	@Override
 	public Optional<Patient> findPatientById(long i){
@@ -43,7 +48,6 @@ public class PatientServiceImplementaion implements PatientService {
 	        return false;
 	    }
 	}
-
 	@Override
 	public List<Patient> filter(Patient p){
 		List<Patient> filterList=repository.findByOrderByIdAsc();
@@ -62,7 +66,14 @@ public class PatientServiceImplementaion implements PatientService {
 		}
 		return filterList;
 	}
-
+	@Override
+	public List<Patient> filterByPage(Patient p,long page){
+		return filter(p).subList(4*((int)page-1),4*(int)page);
+	}
+	@Override
+	public Long filterCounter(Patient p) {
+		return (long) filter(p).size();
+	}
 	@Override
 	public boolean update(Patient p) {
 	    try {

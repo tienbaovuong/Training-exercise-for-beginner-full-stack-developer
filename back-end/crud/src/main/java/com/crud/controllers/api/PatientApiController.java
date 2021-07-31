@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -43,14 +44,21 @@ public class PatientApiController {
 	    };
 	}
 	@GetMapping("")
-	public List<Patient> getAllPatient() {
-	    return patientService.findAllPatient();
+	public List<Patient> getAllPatient(@RequestParam  int page) {
+	    return patientService.findPatientByPage(page);
 	}
-	@PostMapping("/filter")
-	public List<Patient> getPatient(@RequestBody Patient patient) {
-	    return patientService.filter(patient);
+	@GetMapping("/count")
+	public Long getNumberOfPatient() {
+		return patientService.findNumberOfPatient();
 	}
-
+	@PostMapping("/filter/{page}")
+	public List<Patient> getPatient(@RequestBody Patient patient,@PathVariable("page") long page) {
+	    return patientService.filterByPage(patient,page);
+	}
+	@PostMapping("filter/count")
+	public Long getNumberOfFilterPatient(@RequestBody Patient patient) {
+		return patientService.filterCounter(patient);
+	}
 	@PostMapping("")
 	public String addPatient(@RequestBody Patient patient) {
 
