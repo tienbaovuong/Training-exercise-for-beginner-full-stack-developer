@@ -4,25 +4,32 @@ import {useHistory} from 'react-router-dom';
 import {Link, Route, Switch } from "react-router-dom";
 import './index.css';
 import './form.css';
-export default function EditPage(id) {
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState('');
-  const [age, setAge] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone_number, setPhone] = useState('');
+import { useSelector } from "react-redux";
+export default function EditPage(filterMode,page,index) {
+  const patient0 = useSelector((state)=>state.mainData[page-1]); 
+  const patient1 = useSelector((state)=>state.filterData[page-1]);
+  let patient;
+  const matchURL=`/edit/${filterMode}/${page}/${index}`;
+  if(filterMode==0) patient=patient0[index];
+  else patient=patient1[index];
+  const [name, setName] = useState(patient.name);
+  const [gender, setGender] = useState(patient.gender);
+  const [age, setAge] = useState(patient.age);
+  const [email, setEmail] = useState(patient.email);
+  const [phone_number, setPhone] = useState(patient.phone_number);
     return(
       <div>
         <Switch>
-          <Route exact path={`/edit/id/${id}`}>
+          <Route exact path={matchURL}>
             <h2>Edit patient</h2>
-            <PatientEditForm id={id} setName={setName} name={name} setGender={setGender} gender={gender} setAge={setAge} age={age}
-            setEmail={setEmail} email={email} setPhone={setPhone} phone_number={phone_number}/>
+            <PatientEditForm id={patient.id} setName={setName} name={name} setGender={setGender} gender={gender} setAge={setAge} age={age}
+            setEmail={setEmail} email={email} setPhone={setPhone} phone_number={phone_number} matchURL={matchURL}/>
           </Route>
-          <Route exact path={`/edit/id/${id}/confirm`}>
+          <Route exact path={matchURL+"/confirm"}>
             <h2>Edit patient confirm</h2>
-            <OnSubmit id={id} name={name} gender={gender} age={age} email={email} phone_number={phone_number}/>
+            <OnSubmit id={patient.id} name={name} gender={gender} age={age} email={email} phone_number={phone_number} matchURL={matchURL}/>
           </Route>
-          <Route exact path={`/edit/id/${id}/success`}>
+          <Route exact path={matchURL+"/success"}>
             <h2>Congrats! Patient was Edited</h2>
             <a href="/"><button class="gohome">Go home</button></a>
           </Route>
@@ -31,17 +38,14 @@ export default function EditPage(id) {
     )
 
 }
-function OnSubmit({id,name,gender,age,email,phone_number}){
+function OnSubmit({id,name,gender,age,email,phone_number,matchURL}){
       const history =useHistory();
-      useEffect(() => {
-        console.log(name);
-      }, [name, gender, age, email, phone_number])
       const OnConfirm = (event) =>{
         event.preventDefault();
         axios.put('http://localhost:8080/api/patient',{ id,name,gender,age,email,phone_number})
             .then((response) => {
               console.log(response.data)
-              history.push(`/edit/id/${id}/success`)
+              history.push(matchURL+`/success`)
             }); 
       }
       return(
@@ -58,9 +62,8 @@ function OnSubmit({id,name,gender,age,email,phone_number}){
       )
 }
 
-function PatientEditForm({id,setName, name,setAge,age,setEmail,email,setGender,gender,setPhone,phone_number}) { 
+function PatientEditForm({id, setName, name,setAge,age,setEmail,email,setGender,gender,setPhone,phone_number,matchURL}) { 
   const history = useHistory(); 
-  console.log(name);
     const onChange = (event) => {
       if (event.target.name === "name") {
         setName(event.target.value);
@@ -88,21 +91,20 @@ function PatientEditForm({id,setName, name,setAge,age,setEmail,email,setGender,g
       else if(!emailRegex.test(email)){
         alert("Invalid email")
       }
-      else history.push(`/edit/id/${id}/confirm`);
+      else history.push(matchURL+`/confirm`);
   }
 
     return (
     <div className="center-form">
       <form onSubmit= {onSubmit}>
-        <pre className="idbox">PatientID   <input type="text"  value={id} readonly="readonly" /></pre>
+        <pre className="idbox">PatientID   <input type="text"  value={id} readOnly="readonly" /></pre>
         <pre className="namebox">Name   <input required
           type="text"
           name="name"
           value={name}
           onChange={onChange}
         /></pre>
-        <pre className="genderbox">Gender   <select required name="gender" id="gender"  onChange={onChange}>
-            <option hidden value={null} ></option>
+        <pre className="genderbox">Gender   <select required name="gender" id="gender"  value={gender}  onChange={onChange}>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Would rather not say">Would rather not say</option>

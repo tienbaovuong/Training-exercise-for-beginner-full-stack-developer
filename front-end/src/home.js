@@ -210,7 +210,7 @@ function Table (props){
                 <table>
                     <tbody>
                         <RenderTableHeader/>
-                        <RenderTableData patients={patients}/>
+                        <RenderTableData patients={patients} page={props.page} filterMode={props.filterMode}/>
                     </tbody>
                 </table>
                 <nav>
@@ -239,9 +239,8 @@ function RenderTableHeader(){
     )
 }
 
-function RenderTableData({patients}){
-    console.log(patients);
-    if(patients==null) return (<p>Loading...</p>);
+function RenderTableData({patients,page,filterMode}){
+    if(patients==null) return <tr><td>Loading...</td></tr>
     return patients.map((patient, index)=>{
             return (
                <tr key={index}>
@@ -253,7 +252,7 @@ function RenderTableData({patients}){
                   <td>{patient.phone_number}</td>
                   <td>
                           <nav>
-                              <pre style={{ display: 'inline-block'}}><Link  to={`/edit/id/${patient.id}`}>Edit</Link>  | </pre>
+                              <pre style={{ display: 'inline-block'}}><Link  to={`/edit/${filterMode}/${page}/${index}`}>Edit</Link>  | </pre>
                               <DeleteDialog id={patient.id}/>
                           </nav>
                   </td>

@@ -21,7 +21,7 @@ export default function App() {
     <Router>
       <a href="/"><h1>VINBRAIN</h1></a>
         <Switch>
-          <Route  path="/edit/id/:id">
+          <Route  path="/edit/:filterMode/:page/:index">
             <Edit />
           </Route>
           <Route path="/create">
@@ -39,10 +39,8 @@ export default function App() {
     )
 }
 function Edit(){
-  const { id } = useParams();
-  return EditPage(id);
-  //if(!Number.isInteger(id)) return <p>Something went wrong</p>
-  return <p>editing patient #{id}</p>
+  const { filterMode,page,index } = useParams();
+  return EditPage(filterMode,page,index);
 }
 function Create(){
   return <CreatePage/>;
