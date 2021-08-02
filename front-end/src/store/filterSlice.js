@@ -6,7 +6,7 @@ export const filterSlice = createSlice({
             id:null,
             name:null,
             gender:null,
-            age:0,
+            age:null,
             email:null,
             phone_number:null
         
@@ -14,6 +14,7 @@ export const filterSlice = createSlice({
     reducers: {
         changeFilter: (state,action) =>{
             state=action.payload
+            console.log(state);
         },
     }
 

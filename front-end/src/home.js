@@ -1,9 +1,9 @@
-import React from 'react';
+import React ,{useState} from 'react';
 import './index.css';
 import './home.css';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux'
-import { changeFilter} from './store/filterSlice.js'
+//import { changeFilter} from './store/filterSlice.js'
 import {
     Switch,
     Route,
@@ -12,103 +12,30 @@ import {
     useHistory
 } from "react-router-dom";
 import { DeleteDialog } from './delete.js';
-import { changeFilterData,resetFilterData } from './store/filterDataSlice.js';
+import { changeFilterData, resetFilterData } from './store/filterDataSlice.js';
 import { changeCounterFilter } from './store/counterFilterSlice.js';
 import { changeCounter } from './store/counterSlice.js';
 import { changeMainData} from './store/mainDataSlice.js';
-class Home extends React.Component{
-    constructor(props){
-        super(props)
-        this.state={filter:{
-            id: null, 
-            name: null,
-            gender:null,
-            age:0, 
-            email:null, 
-            phone_number:null
-            },
-            filterMode:0}
-    }
-    
-    onChange = (event) => {
-        this.setState(
-            this.state.filter.id = event.target.value
-        )
-    }
-    onSubmit = (event) => {
-        event.preventDefault();
-        this.setState({filterMode:1})
-        OnSubmit(this.state.filter);
-    }
-    renderFilter(){
-    const {  id, name, gender, age,email,phone_number } =this.state
-    return (
-    <div>
-      <form className="filter-form" onSubmit={this.onSubmit}>
-      <input 
-          type="text"
-          name="id"
-          placeholder="PatientID"
-          value={id}
-          onChange={this.onChange}
-          style={{ width :"250px" }}
-          />
-        <input 
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={name}
-          onChange={this.onChange}
-          style={{ width :"250px" }}
-          />
-        <select  name="gender" id="gender"  onChange={this.onChange}>
-            <option hidden value="" >Gender</option>
-            <option value="">(Either)</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Would rather not say">Would rather not say</option>
-            
-        </select>
-        <input 
-          type="number" min="1"
-          name="age" 
-          placeholder="Age"
-          value={age}
-          onChange={this.onChange}
-          style={{ width :"70px" }}
-          />
-        <input 
-          type="text"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={this.onChange}
-          style={{ width :"250px" }}
-          />
-        <input 
-          type="text"
-          name="phone_number"
-          placeholder="Phone number"
-          value={phone_number}
-          onChange={this.onChange}
-          style={{ width :"250px" }}
-          />
-        <button className="filter-button" type="submit">Filter</button>
-      </form>
-    </div>
-    )
-    }
-    render(){
-        return(
+export default function Home(){
+    const [id,setID] = useState(null);
+    const [name, setName] = useState(null);
+    const [gender, setGender] = useState(null);
+    const [age, setAge] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [phone_number, setPhone] = useState(null);
+    const [filterMode,setFiltetMode] = useState(0);
+    const [filter,setFilter]= useState(null);
+    return(
             <div>
-                {this.renderFilter()}
+                <RenderFilter id={id} setID={setID} setName={setName} name={name} setGender={setGender} gender={gender} setAge={setAge} age={age}
+            setEmail={setEmail} email={email} setPhone={setPhone} phone_number={phone_number} setFiltetMode={setFiltetMode} setFilter={setFilter}/>
                 
                 <Switch>
                     <Route path="/:page">
-                        <TableWithPage filterMode={this.state.filterMode} />
+                        <TableWithPage filterMode={filterMode} filter={filter}/>
                     </Route>
                     <Route  path="/">
-                        <Table  page={1} filterMode={this.state.filterMode}/>
+                        <Table  page={1} filterMode={filterMode} filter={filter}/>
                     </Route>
                     
                 </Switch>
@@ -116,32 +43,123 @@ class Home extends React.Component{
             </div>
             
         )
-    }
 }
-export default Home;
 
-function OnSubmit(state){
-    const dispatch = useDispatch();
-    dispatch(changeFilter(state));
-    dispatch(resetFilterData);
-    dispatch(changeCounterFilter(0))
+
+function RenderFilter({id,setID, setName, name,setAge,age,setEmail,email,setGender,gender,setPhone,phone_number,setFiltetMode,setFilter}){
     const history = useHistory();
-    history.push("/");
+    const dispatch = useDispatch();
+    const filterData= useSelector((state)=>state.filterData);
+    const onChange = (event) => {
+      if (event.target.name=== "id") {
+        setID(event.target.value);
+      }
+      if (event.target.name === "name") {
+        setName(event.target.value);
+      }
+      if (event.target.name === "gender") {
+        setGender(event.target.value);
+      }
+      if (event.target.name === "age") {
+        setAge(event.target.value);
+      }
+      if (event.target.name === "email") {
+        setEmail(event.target.value);
+      }
+      if (event.target.name === "phone_number") {
+        setPhone(event.target.value);
+      }
+    }
+    const onSubmit = (event) => {
+        event.preventDefault();
+        setFiltetMode(1);
+        let state={
+            id:id,
+            name:name,
+            gender:gender,
+            age:age,
+            email:email,
+            phone_number:phone_number
+        }
+        setFilter(state);
+        dispatch(resetFilterData());
+        dispatch(changeCounterFilter(0))
+        history.push("/1");
+    }
+
+
+    return (
+        <div>
+          <form className="filter-form" onSubmit={onSubmit}>
+          <input 
+              type="text"
+              name="id"
+              placeholder="PatientID"
+              value={id}
+              onChange={onChange}
+              style={{ width :"250px" }}
+              />
+            <input 
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={name}
+              onChange={onChange}
+              style={{ width :"250px" }}
+              />
+            <select  name="gender" id="gender"  onChange={onChange}>
+                <option hidden value="" >Gender</option>
+                <option value="">(Either)</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Would rather not say">Would rather not say</option>
+                
+            </select>
+            <input 
+              type="number" min="1"
+              name="age" 
+              placeholder="Age"
+              value={age}
+              onChange={onChange}
+              style={{ width :"70px" }}
+              />
+            <input 
+              type="text"
+              name="email"
+              placeholder="Email"
+              value={email}
+              onChange={onChange}
+              style={{ width :"250px" }}
+              />
+            <input 
+              type="text"
+              name="phone_number"
+              placeholder="Phone number"
+              value={phone_number}
+              onChange={onChange}
+              style={{ width :"250px" }}
+              />
+            <button className="filter-button" type="submit">Filter</button>
+          </form>
+        </div>
+        )
 }
+
 function TableWithPage(props) {
     const {page}=useParams();
-    return <Table page={page} filterMode={props.filterMode}/>    
+    return <Table page={page} filterMode={props.filterMode} filter={props.filter}/>    
 }
 function Table (props){
-    const patientsFilter = useSelector((state)=>state.filterData[props.page-1]);
-    const patientsMain = useSelector((state)=>state.mainData[props.page-1]);
-    const filter= useSelector((state)=> state.filter);
     const counterFilter=useSelector((state)=> state.counterFilter.value);
     const counterMain=useSelector((state)=> state.counterMain.value);
+    const patientsFilter = useSelector((state)=>state.filterData[props.page-1]);
+    const patientsMain = useSelector((state)=>state.mainData[props.page-1]);
+    const filter=props.filter;
     const dispatch=useDispatch();
     let patients=[];
     let counter=0;
     if(props.filterMode===1){
+        if(filter=={id:null,name:null,gender:null,age:null,email:null,phone_number:null}) return (<p>Loading...</p>);
         patients = patientsFilter;
         counter = counterFilter;
         if(counter==0){

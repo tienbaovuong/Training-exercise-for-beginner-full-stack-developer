@@ -10,8 +10,14 @@ export default function EditPage(filterMode,page,index) {
   const patient1 = useSelector((state)=>state.filterData[page-1]);
   let patient;
   const matchURL=`/edit/${filterMode}/${page}/${index}`;
-  if(filterMode==0) patient=patient0[index];
-  else patient=patient1[index];
+  if(filterMode==0) {
+    if(patient0==null) window.location.href = 'http://localhost:3000'; 
+    else patient=patient0[index];
+  }
+  else {
+    if(patient1==null) window.location.href = 'http://localhost:3000'; 
+    else patient=patient1[index];
+  }
   const [name, setName] = useState(patient.name);
   const [gender, setGender] = useState(patient.gender);
   const [age, setAge] = useState(patient.age);

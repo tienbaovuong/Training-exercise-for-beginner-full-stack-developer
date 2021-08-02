@@ -7,6 +7,7 @@ export const counterFilterSlice = createSlice({
     },
     reducers: {
         changeCounterFilter: (state,action) =>{
+            console.log("reset counter");
             state.value=action.payload
         },
     }
