@@ -33,7 +33,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
+		</dependency>   
 	</dependencies>
 
 	<build>
@@ -41,6 +41,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+        			<execution>
+            			<configuration>
+                			<mainClass>com.crud.CrudApplication.java</mainClass>
+            			</configuration>
+        			</execution>
+   				 </executions>
 			</plugin>
 		</plugins>
 	</build>

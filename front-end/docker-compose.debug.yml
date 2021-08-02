@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  bao:
-    image: bao
+  umino0124/bao:
+    image: front-end
     build:
       context: .
       dockerfile: ./Dockerfile
