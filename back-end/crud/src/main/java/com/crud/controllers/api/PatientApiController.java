@@ -1,10 +1,9 @@
 package com.crud.controllers.api;
-
-import java.time.OffsetDateTime;
 import java.util.List;
 
+
+import com.crud.configuration.Webconfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import com.crud.data.models.Patient;
-import com.crud.data.services.PatientServiceImplementaion;
 import com.crud.data.services.PatientService;
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = Webconfig.crossOrigin)
 @RestController()
 
 @RequestMapping("/api/patient")
@@ -29,20 +24,7 @@ import com.crud.data.services.PatientService;
 public class PatientApiController {
 	@Autowired
     PatientService patientService;
-	@Bean
-	public WebMvcConfigurer CORSConfigurer() {
-	    return new WebMvcConfigurer() {
-	        @Override
-	        public void addCorsMappings(CorsRegistry registry) {
-	            registry.addMapping("/**")
-	                    .allowedOrigins("*")
-	                    .allowedHeaders("*")
-	                    .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-	                    .maxAge(-1)   // add maxAge
-	                    .allowCredentials(false);
-	        }
-	    };
-	}
+	
 	@GetMapping("")
 	public List<Patient> getAllPatient(@RequestParam  int page) {
 	    return patientService.findPatientByPage(page);
@@ -52,20 +34,18 @@ public class PatientApiController {
 		return patientService.findNumberOfPatient();
 	}
 	@PostMapping("/filter/{page}")
-	public List<Patient> getPatient(@RequestBody Patient patient,@PathVariable("page") long page) {
-	    return patientService.filterByPage(patient,page);
+	public List<Patient> getPatient(@PathVariable("page") long page, @RequestBody Patient patient) {
+	    return patientService.filterByPage(page,patient);
 	}
 	@PostMapping("filter/count")
 	public Long getNumberOfFilterPatient(@RequestBody Patient patient) {
-		return patientService.filterCounter(patient);
+		return (long) patientService.filterCounter(patient);
 	}
 	@PostMapping("")
 	public String addPatient(@RequestBody Patient patient) {
-
+		String type="Post";
 	    if(patient != null) {
-	    	patient.created_at=OffsetDateTime.now();
-	    	patient.updated_at=patient.created_at;
-	        patientService.insert(patient);
+	        patientService.insertUpdate(patient,type);
 	        return "Added a patient";
 	    } else {
 	        return "Request does not contain a body";
@@ -87,10 +67,10 @@ public class PatientApiController {
 
 	@PutMapping("")
 	public String updatePerson(@RequestBody Patient patient) {
+		String type="Put";
 	    if(patient != null) {
-	    	patient.created_at=patientService.findPatientById(patient.id).orElse(null).created_at;
-	    	patient.updated_at=OffsetDateTime.now();
-	        patientService.update(patient);
+	    	
+	        patientService.insertUpdate(patient,type);
 	        return "Updated patient.";
 	    } else {
 	        return "Request does not contain a body";

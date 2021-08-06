@@ -62,8 +62,8 @@ public class Patient {
     public Patient() {}
 
 
-    public Patient(long id, String name, String gender,int age, String email, String phone_number,OffsetDateTime created_at, OffsetDateTime updated_at) {
-        this.id=id;
+    public Patient(long patient_id, String name, String gender,int age, String email, String phone_number,OffsetDateTime created_at, OffsetDateTime updated_at) {
+        this.id=patient_id;
         this.name = name;
         this.gender=gender;      
         this.age=age;        

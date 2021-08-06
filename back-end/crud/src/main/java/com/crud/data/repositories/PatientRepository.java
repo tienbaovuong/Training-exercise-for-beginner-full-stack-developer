@@ -1,13 +1,11 @@
 package com.crud.data.repositories;
 
-import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import com.crud.data.models.Patient;
 
-public interface PatientRepository extends PagingAndSortingRepository<Patient, Long>{
-	List<Patient> findByOrderByIdAsc(PageRequest pageRequest);
-	List<Patient> findByOrderByIdAsc();
+public interface PatientRepository extends QuerydslPredicateExecutor<Patient>,JpaRepository<Patient, Long> {
+	
 }

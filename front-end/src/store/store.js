@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import filterReducer from './filterSlice.js'
-import counterReducer from './counterSlice.js'
-import counterFilterReducer from './counterFilterSlice.js'
-import mainDataReducer from './mainDataSlice.js'
-import filterDataReducer from './filterDataSlice.js'
+import filterReducer from './reducer/filterSlice.js'
+import counterReducer from './reducer/filterSlice'
+import counterFilterReducer from './reducer/counterFilterSlice.js'
+import mainDataReducer from './reducer/mainDataSlice.js'
+import filterDataReducer from './reducer/filterDataSlice.js'
 export default configureStore({
   reducer: {
       filter: filterReducer,

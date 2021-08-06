@@ -1,10 +1,28 @@
 version: '3.4'
-
 services:
-  crud:
-    image: crud
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    ports:
-      - 8080:8080
+    springapp:
+      build: .
+      container_name: springapp
+      environment:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/UserInfo
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: umino0124
+      ports:
+        - 8080:8080
+      depends_on:
+        - db
+    db:
+      image: postgres
+      container_name: db
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=umino0124
+        - POSTGRES_DB=UserInfo
+        - PG_DEFAULT=/var/lib/postgresql/data/pgdata
+      ports:
+        - 5432:5432
+      volumes:
+        - pg_default:/var/lib/postgresql/data
+volumes:
+  pg_default:
+    driver: local
