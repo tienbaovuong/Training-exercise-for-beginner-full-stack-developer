@@ -41,7 +41,7 @@ export default function Table (props){
     }else{
         patients = patientsMain;
         counter = counterMain;
-        if(counter===0){
+        if(counter==0){
             axios.get(`http://localhost:8080/api/patient/count`)
             .then((response) => {
                     dispatch(changeCounter(response.data));
